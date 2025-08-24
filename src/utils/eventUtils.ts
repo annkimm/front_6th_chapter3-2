@@ -1,4 +1,4 @@
-import { Event } from '../types';
+import { Event, EventForm } from '../types';
 import { getWeekDates, isDateInRange } from './dateUtils';
 
 function filterEventsByDateRange(events: Event[], start: Date, end: Date): Event[] {
@@ -55,4 +55,8 @@ export function getFilteredEvents(
   }
 
   return searchedEvents;
+}
+
+export function generateRepeatEvents(baseEvent: EventForm): Event[] {
+  return [];
 }
