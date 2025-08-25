@@ -8,7 +8,8 @@ import {
 } from '../../__mocks__/handlersUtils.ts';
 import { useEventOperations } from '../../hooks/useEventOperations.ts';
 import { server } from '../../setupTests.ts';
-import { Event } from '../../types.ts';
+import { Event, EventForm, RepeatType } from '../../types.ts';
+import { useEventForm } from '../../hooks/useEventForm.ts';
 
 const enqueueSnackbarFn = vi.fn();
 
@@ -174,20 +175,173 @@ it("네트워크 오류 시 '일정 삭제 실패'라는 텍스트가 노출되�
 
 it('매일 반복 일정 저장 시 지정된 기간의 모든 일정이 생성된다', async () => {
   // 매일 반복, 1주일간 설정
-  // 7개의 POST 요청이 발생하는지 확인
+  setupMockHandlerCreation();
+
+  // 2. useEventForm 렌더링
+  const { result } = renderHook(() => useEventOperations(false));
+
+  // 3. 매일 반복 설정
+  const dailyRepeatFormData: EventForm = {
+    title: '매일 운동',
+    date: '2024-08-15',
+    startTime: '09:00',
+    endTime: '10:00',
+    repeat: { type: 'daily', interval: 1, endDate: '2024-08-21' },
+    description: '',
+    location: '',
+    category: '',
+    notificationTime: 1,
+  };
+
+  // 4. 저장 실행
+  await act(async () => {
+    await result.current.saveEvent(dailyRepeatFormData); // 실제 저장 함수명 확인 필요
+  });
+
+  // 5. 검증
+  expect(result.current.events).toHaveLength(7); // 7개의 일정
 });
 
 it('매주 반복 일정 저장 시 올바른 간격으로 일정이 생성된다', async () => {
   // 매주 반복, 4주간 설정
   // 4개의 일정이 정확한 날짜에 생성되는지 확인
+  setupMockHandlerCreation();
+
+  // 2. useEventForm 렌더링
+  const { result } = renderHook(() => useEventOperations(false));
+
+  const weeklyRepeatFormData: EventForm = {
+    title: '매주 운동',
+    date: '2024-08-15', // 2024년 8월 15일 (목요일)
+    startTime: '09:00',
+    endTime: '10:00',
+    description: '',
+    location: '',
+    category: '',
+    notificationTime: 10,
+    repeat: { type: 'weekly', interval: 1, endDate: '2024-09-05' },
+  };
+
+  // 4. 저장 실행
+  await act(async () => {
+    await result.current.saveEvent(weeklyRepeatFormData); // 실제 저장 함수명 확인 필요
+  });
+
+  // 5. 검증
+  expect(result.current.events).toHaveLength(4); // 4개의 일정
 });
 
 it('매월 반복 일정에서 31일이 없는 달은 건너뛴다', async () => {
   // 1월 31일 시작, 매월 반복, 6개월간
   // 2월, 4월, 6월은 건너뛰고 나머지만 생성되는지 확인
+  setupMockHandlerCreation();
+
+  // 2. useEventForm 렌더링
+  const { result } = renderHook(() => useEventOperations(false));
+
+  // 3. 매일 반복 설정
+  const monthlyRepeatFormData: EventForm = {
+    title: '매월 운동',
+    date: '2024-01-31', // 1월 31일 (31일이 없는 달 테스트용)
+    startTime: '09:00',
+    endTime: '10:00',
+    description: '',
+    location: '',
+    category: '',
+    notificationTime: 10,
+    repeat: { type: 'monthly', interval: 1, endDate: '2024-07-01' },
+  };
+  // 4. 저장 실행
+  await act(async () => {
+    await result.current.saveEvent(monthlyRepeatFormData); // 실제 저장 함수명 확인 필요
+  });
+
+  // 5. 검증
+  expect(result.current.events).toHaveLength(3); // 3개의 일정
 });
 
-it('반복 종료일이 설정된 경우 해당 날짜까지만 생성한다', async () => {
-  // 매일 반복이지만 3일 후 종료
-  // 3개의 일정만 생성되는지 확인
+it('반복 종료일이 시작일보다 이전인 경우 일정이 생성되지 않는다', async () => {
+  // 예외 케이스 테스트
+  setupMockHandlerCreation();
+
+  // 2. useEventForm 렌더링
+  const { result } = renderHook(() => useEventOperations(false));
+
+  // 3. 매일 반복 설정
+  const invalidMonthlyRepeatFormData: EventForm = {
+    title: '매월 운동',
+    date: '2024-01-31', // 시작일: 1월 31일
+    startTime: '09:00',
+    endTime: '10:00',
+    description: '',
+    location: '',
+    category: '',
+    notificationTime: 10,
+    repeat: { type: 'monthly', interval: 1, endDate: '2024-01-01' },
+  };
+
+  // 4. 저장 실행
+  await act(async () => {
+    await result.current.saveEvent(invalidMonthlyRepeatFormData); // 실제 저장 함수명 확인 필요
+  });
+
+  // 5. 검증
+  expect(result.current.events).toHaveLength(0); // 3개의 일정
+});
+
+it('반복 종료일이 시작일과 같으면 1개만 생성된다', async () => {
+  // startDate: 2024-08-15, endDate: 2024-08-15 → 1개
+  setupMockHandlerCreation();
+
+  // 2. useEventForm 렌더링
+  const { result } = renderHook(() => useEventOperations(false));
+
+  // 3. 매일 반복 설정
+  const singleMonthlyRepeatFormData: EventForm = {
+    title: '매월 운동',
+    date: '2024-08-31',        // 시작일: 8월 31일
+    startTime: '09:00',
+    endTime: '10:00',
+    description: '',
+    location: '',
+    category: '',
+    notificationTime: 10,
+    repeat: { type: 'monthly', interval: 1, endDate: '2024-08-31' },
+   };
+
+  // 4. 저장 실행
+  await act(async () => {
+    await result.current.saveEvent(singleMonthlyRepeatFormData); // 실제 저장 함수명 확인 필요
+  });
+
+  // 5. 검증
+  expect(result.current.events).toHaveLength(1); // 3개의 일정
+});
+
+it('윤년 2월 29일 연간 반복이 올바르게 처리된다', async () => {
+  // yearly, 2024-02-29 시작 → 윤년에만 생성
+  setupMockHandlerCreation();
+
+  // 2. useEventForm 렌더링
+  const { result } = renderHook(() => useEventOperations(false));
+
+  // 3. 매일 반복 설정
+  const yearlyLeapDayRepeatFormData: EventForm = {
+    title: '매일 운동',
+    date: '2024-02-29',        // 시작일: 2024년 2월 29일 (윤년)
+    startTime: '09:00',
+    endTime: '10:00',
+    description: '',
+    location: '',
+    category: '',
+    notificationTime: 10,
+    repeat: { type: 'yearly', interval: 1, endDate: '2029-03-02' },
+   };
+  // 4. 저장 실행
+  await act(async () => {
+    await result.current.saveEvent(yearlyLeapDayRepeatFormData); // 실제 저장 함수명 확인 필요
+  });
+
+  // 5. 검증
+  expect(result.current.events).toHaveLength(2); // 3개의 일정
 });

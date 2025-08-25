@@ -207,9 +207,6 @@ describe('generateRepeatEvents', () => {
     // When
     const events = generateRepeatEvents(baseEvent);
 
-    console.log(events);
-    
-
     // Then - 날짜만 다르고 나머지는 동일한지 확인
     expect(events).toHaveLength(2);
     expect(events[0].date).toBe('2025-08-31');
