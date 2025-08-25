@@ -25,6 +25,8 @@ app.get('/api/events', async (_, res) => {
 app.post('/api/events', async (req, res) => {
   const events = await getEvents();
   const newEvent = { id: randomUUID(), ...req.body };
+  console.log("555555");
+  
 
   fs.writeFileSync(
     `${__dirname}/src/__mocks__/response/realEvents.json`,
@@ -74,6 +76,9 @@ app.delete('/api/events/:id', async (req, res) => {
 app.post('/api/events-list', async (req, res) => {
   const events = await getEvents();
   const repeatId = randomUUID();
+  console.log("req");
+  console.log(req);
+  
   const newEvents = req.body.events.map((event) => {
     const isRepeatEvent = event.repeat.type !== 'none';
     return {
@@ -86,6 +91,9 @@ app.post('/api/events-list', async (req, res) => {
     };
   });
 
+  console.log("newEvents");
+  console.log(req);
+  
   fs.writeFileSync(
     `${__dirname}/src/__mocks__/response/realEvents.json`,
     JSON.stringify({
