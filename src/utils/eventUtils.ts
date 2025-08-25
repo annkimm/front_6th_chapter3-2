@@ -1,5 +1,6 @@
-import { Event, EventForm } from '../types';
-import { getWeekDates, isDateInRange } from './dateUtils';
+import { Event } from "../types";
+import { getWeekDates, isDateInRange } from "./dateUtils";
+
 
 function filterEventsByDateRange(events: Event[], start: Date, end: Date): Event[] {
   return events.filter((event) => {
@@ -55,8 +56,4 @@ export function getFilteredEvents(
   }
 
   return searchedEvents;
-}
-
-export function generateRepeatEvents(baseEvent: EventForm): Event[] {
-  return [];
 }

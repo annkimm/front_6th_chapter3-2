@@ -1,5 +1,5 @@
 import { EventForm } from '../../types';
-import { generateRepeatEvents } from '../../utils/eventUtils';
+import { generateRepeatEvents } from '../../utils/repeatUtils';
 
 describe('generateRepeatEvents', () => {
   it('반복 타입이 none인 경우 빈 배열을 반환한다', () => {
@@ -79,7 +79,7 @@ describe('generateRepeatEvents', () => {
     expect(events).toHaveLength(3);
     expect(events[0].date).toBe('2025-01-01');
     expect(events[1].date).toBe('2025-01-08');
-    expect(events[2].date).toBe('2025-01-16');
+    expect(events[2].date).toBe('2025-01-15');
 
     // 다른 필드들도 복사되었는지 확인
     events.forEach((event) => {
@@ -167,7 +167,7 @@ describe('generateRepeatEvents', () => {
       repeat: {
         type: 'yearly',
         interval: 1,
-        endDate: '2028-01-01',
+        endDate: '2028-03-01',
       },
       notificationTime: 10,
     };
@@ -176,9 +176,9 @@ describe('generateRepeatEvents', () => {
     const events = generateRepeatEvents(baseEvent);
 
     // Then - 날짜만 다르고 나머지는 동일한지 확인
-    expect(events).toHaveLength(3);
+    expect(events).toHaveLength(2);
     expect(events[0].date).toBe('2024-02-29');
-    expect(events[2].date).toBe('2028-02-29');
+    expect(events[1].date).toBe('2028-02-29');
 
     // 다른 필드들도 복사되었는지 확인
     events.forEach((event) => {
@@ -207,8 +207,11 @@ describe('generateRepeatEvents', () => {
     // When
     const events = generateRepeatEvents(baseEvent);
 
+    console.log(events);
+    
+
     // Then - 날짜만 다르고 나머지는 동일한지 확인
-    expect(events).toHaveLength(3);
+    expect(events).toHaveLength(2);
     expect(events[0].date).toBe('2025-08-31');
     expect(events[1].date).toBe('2025-10-31');
 
