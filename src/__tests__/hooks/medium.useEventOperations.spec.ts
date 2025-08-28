@@ -73,11 +73,17 @@ it('정의된 이벤트 정보를 기준으로 적절하게 저장이 된다', a
 
 it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업데이트 된다", async () => {
   setupMockHandlerUpdating();
-
+  
   const { result } = renderHook(() => useEventOperations(true));
-
+  
   await act(() => Promise.resolve(null));
 
+  await act(async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  });
+  
+  console.log('Initial events after loading:', result.current.events);
+  
   const updatedEvent: Event = {
     id: '1',
     date: '2025-10-15',
@@ -91,11 +97,19 @@ it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업�
     endTime: '11:00',
   };
 
+  console.log('Initial events:', result.current.events);
+  
   await act(async () => {
     await result.current.saveEvent(updatedEvent);
   });
 
-  expect(result.current.events[0]).toEqual(updatedEvent);
+  console.log('Initial events222:', result.current.events);
+  
+  // 수정된 부분: ID로 특정 이벤트 찾기
+
+  const updatedEventInList = result.current.events.find(event => event.id === '1');
+  console.log(updatedEventInList);
+  expect(updatedEventInList).toEqual(updatedEvent);
 });
 
 it('존재하는 이벤트 삭제 시 에러없이 아이템이 삭제된다.', async () => {

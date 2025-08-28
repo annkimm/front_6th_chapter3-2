@@ -26,7 +26,7 @@ export const setupMockHandlerCreation = (initEvents = [] as Event[]) => {
 };
 
 export const setupMockHandlerUpdating = (initEvents = [] as Event[]) => {
-  const mockEvents: Event[] = initEvents ? initEvents : [
+  const mockEvents: Event[] = initEvents.length > 0 ? initEvents : [
     {
       id: '1',
       title: '기존 회의',
@@ -69,7 +69,7 @@ export const setupMockHandlerUpdating = (initEvents = [] as Event[]) => {
 };
 
 export const setupMockHandlerDeletion = (initEvents = [] as Event[]) => {
-  const mockEvents: Event[] = initEvents ? initEvents : [
+  const mockEvents: Event[] = initEvents.length > 0 ? initEvents : [
     {
       id: '1',
       title: '삭제할 이벤트',
