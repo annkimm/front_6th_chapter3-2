@@ -72,7 +72,7 @@ function moveToNextDate(
     case 'weekly':
       date.setDate(date.getDate() + 7 * interval);
       break;
-    case 'monthly':
+    case 'monthly': {
       // 현재 년도와 월 저장
       let nextYear = date.getFullYear();
       let nextMonth = date.getMonth() + interval;
@@ -92,7 +92,8 @@ function moveToNextDate(
       date.setFullYear(nextYear, nextMonth, finalDay);
 
       break;
-    case 'yearly':
+    }
+    case 'yearly': {
       // 연도 추가
       date.setFullYear(date.getFullYear() + interval);
 
@@ -114,9 +115,9 @@ function moveToNextDate(
         }
       }
       break;
+    }
   }
 }
-
 // 윤년 판별 함수
 function isLeapYear(year: number): boolean {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
