@@ -8,8 +8,7 @@ import {
 } from '../../__mocks__/handlersUtils.ts';
 import { useEventOperations } from '../../hooks/useEventOperations.ts';
 import { server } from '../../setupTests.ts';
-import { Event, EventForm, RepeatType } from '../../types.ts';
-import { useEventForm } from '../../hooks/useEventForm.ts';
+import { Event, EventForm } from '../../types.ts';
 
 const enqueueSnackbarFn = vi.fn();
 
@@ -73,17 +72,17 @@ it('정의된 이벤트 정보를 기준으로 적절하게 저장이 된다', a
 
 it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업데이트 된다", async () => {
   setupMockHandlerUpdating();
-  
+
   const { result } = renderHook(() => useEventOperations(true));
-  
+
   await act(() => Promise.resolve(null));
 
   await act(async () => {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   });
-  
+
   console.log('Initial events after loading:', result.current.events);
-  
+
   const updatedEvent: Event = {
     id: '1',
     date: '2025-10-15',
@@ -98,16 +97,16 @@ it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업�
   };
 
   console.log('Initial events:', result.current.events);
-  
+
   await act(async () => {
     await result.current.saveEvent(updatedEvent);
   });
 
   console.log('Initial events222:', result.current.events);
-  
+
   // 수정된 부분: ID로 특정 이벤트 찾기
 
-  const updatedEventInList = result.current.events.find(event => event.id === '1');
+  const updatedEventInList = result.current.events.find((event) => event.id === '1');
   console.log(updatedEventInList);
   expect(updatedEventInList).toEqual(updatedEvent);
 });
@@ -313,7 +312,7 @@ it('반복 종료일이 시작일과 같으면 1개만 생성된다', async () =
   // 3. 매일 반복 설정
   const singleMonthlyRepeatFormData: EventForm = {
     title: '매월 운동',
-    date: '2024-08-31',        // 시작일: 8월 31일
+    date: '2024-08-31', // 시작일: 8월 31일
     startTime: '09:00',
     endTime: '10:00',
     description: '',
@@ -321,7 +320,7 @@ it('반복 종료일이 시작일과 같으면 1개만 생성된다', async () =
     category: '',
     notificationTime: 10,
     repeat: { type: 'monthly', interval: 1, endDate: '2024-08-31' },
-   };
+  };
 
   // 4. 저장 실행
   await act(async () => {
@@ -342,7 +341,7 @@ it('윤년 2월 29일 연간 반복이 올바르게 처리된다', async () => {
   // 3. 매일 반복 설정
   const yearlyLeapDayRepeatFormData: EventForm = {
     title: '매일 운동',
-    date: '2024-02-29',        // 시작일: 2024년 2월 29일 (윤년)
+    date: '2024-02-29', // 시작일: 2024년 2월 29일 (윤년)
     startTime: '09:00',
     endTime: '10:00',
     description: '',
@@ -350,7 +349,7 @@ it('윤년 2월 29일 연간 반복이 올바르게 처리된다', async () => {
     category: '',
     notificationTime: 10,
     repeat: { type: 'yearly', interval: 1, endDate: '2029-03-02' },
-   };
+  };
   // 4. 저장 실행
   await act(async () => {
     await result.current.saveEvent(yearlyLeapDayRepeatFormData); // 실제 저장 함수명 확인 필요
