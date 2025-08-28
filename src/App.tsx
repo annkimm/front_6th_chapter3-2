@@ -208,6 +208,13 @@ function App() {
                               >
                                 {event.title}
                               </Typography>
+                              {event.repeat.type !== 'none' && (
+                                <img
+                                  style={{ width: '14px', height: 'auto', verticalAlign: 'middle' }}
+                                  src="/public/repeat.png"
+                                  alt="반복된 일정"
+                                />
+                              )}
                             </Stack>
                           </Box>
                         );
@@ -295,6 +302,17 @@ function App() {
                                     >
                                       {event.title}
                                     </Typography>
+                                    {event.repeat.type !== 'none' && (
+                                      <img
+                                        style={{
+                                          width: '14px',
+                                          height: 'auto',
+                                          verticalAlign: 'middle',
+                                        }}
+                                        src="/public/repeat.png"
+                                        alt="반복된 일정"
+                                      />
+                                    )}
                                   </Stack>
                                 </Box>
                               );
@@ -443,10 +461,14 @@ function App() {
               <FormControl fullWidth>
                 <FormLabel>반복 유형</FormLabel>
                 <Select
+                  id="repeat"
                   size="small"
                   value={repeatType}
+                  aria-labelledby="repeat-label"
+                  aria-label="반복"
                   onChange={(e) => setRepeatType(e.target.value as RepeatType)}
                 >
+                  <MenuItem value="none"></MenuItem>
                   <MenuItem value="daily">매일</MenuItem>
                   <MenuItem value="weekly">매주</MenuItem>
                   <MenuItem value="monthly">매월</MenuItem>
@@ -460,6 +482,7 @@ function App() {
                     size="small"
                     type="number"
                     value={repeatInterval}
+                    aria-label="반복 간격"
                     onChange={(e) => setRepeatInterval(Number(e.target.value))}
                     slotProps={{ htmlInput: { min: 1 } }}
                   />
@@ -469,6 +492,7 @@ function App() {
                   <TextField
                     size="small"
                     type="date"
+                    aria-label="반복 종료일"
                     value={repeatEndDate}
                     onChange={(e) => setRepeatEndDate(e.target.value)}
                   />
