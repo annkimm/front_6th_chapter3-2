@@ -96,13 +96,9 @@ it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업�
     endTime: '11:00',
   };
 
-  console.log('Initial events:', result.current.events);
-
   await act(async () => {
     await result.current.saveEvent(updatedEvent);
   });
-
-  console.log('Initial events222:', result.current.events);
 
   // 수정된 부분: ID로 특정 이벤트 찾기
 
