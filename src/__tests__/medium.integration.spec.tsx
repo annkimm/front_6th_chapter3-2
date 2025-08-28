@@ -71,8 +71,6 @@ const saveSchedule = async (user: UserEvent, form: Omit<Event, 'id' | 'notificat
     fireEvent.change(input, { target: { value: repeat.endDate } });
   }
 
-  console.log(screen.getByTestId('event-submit-button').outerHTML);
-
   const submitButton = screen.getByTestId('event-submit-button');
   await user.click(submitButton);
 };
@@ -116,8 +114,6 @@ describe('일정 CRUD 및 기본 기능', () => {
     await user.type(screen.getByLabelText('설명'), '회의 내용 변경');
 
     await user.click(screen.getByTestId('event-submit-button'));
-
-    console.log(document.body.textContent);
 
     const eventList = within(screen.getByTestId('event-list'));
     expect(eventList.getByText('수정된 회의')).toBeInTheDocument();

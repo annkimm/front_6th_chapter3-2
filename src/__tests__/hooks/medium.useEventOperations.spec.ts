@@ -81,8 +81,6 @@ it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업�
     await new Promise((resolve) => setTimeout(resolve, 100));
   });
 
-  console.log('Initial events after loading:', result.current.events);
-
   const updatedEvent: Event = {
     id: '1',
     date: '2025-10-15',
